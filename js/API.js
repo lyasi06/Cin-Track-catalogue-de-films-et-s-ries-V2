@@ -1,7 +1,6 @@
 
 //URL de l'API
-const url = "https://raw.githubusercontent.com/ouchad97/cinetrack-api/main/cinetrack-data.json";
-
+const url = "https://6afae7d2730c1d152f32b5ba.mockapi.io/Cin-Truck";
 //Récupère toutes les données depuis l'API.
 //Vérifie que la réponse est OK, sinon lève une erreur.
 //Retourne le tableau JSON des items.
