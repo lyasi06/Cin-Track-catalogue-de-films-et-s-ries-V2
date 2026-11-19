@@ -20,13 +20,23 @@
     </header>
     aside
     <main>
-        <div class="flex border bg-slate-800 rounded justify-around mt-6 h-24">
-            <p class="text-amber-50 font-bold italic">image</p>
-            <p class="text-amber-50 font-bold italic">titre</p>
-            <p class="text-amber-50 font-bold italic">type</p>
-            <p class="text-amber-50 font-bold italic">année</p>
+        <p id="message" class="hidden"></p>
+        <p id="loader" class="p-4 text-amber-50">Chargement…</p>
+        <div >
+            <table class="w-full text-left border bg-slate-800 border-gray-700 ">
+                <thead>
+                    <tr>
+                        <th class="p-3 italic text-amber-50 ">Image</th>
+                        <th class="p-3 italic text-amber-50">Titre</th>
+                        <th class="p-3 italic text-amber-50">Type</th>
+                        <th class="p-3 italic text-amber-50">Année</th>
+                        <th class="p-3 italic text-amber-50">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tabl-film"></tbody>
+            </table>
         </div>
     </main>
-        
+        <script type="module" src="./js/admin.js"></script>
 </body>
 </html>
