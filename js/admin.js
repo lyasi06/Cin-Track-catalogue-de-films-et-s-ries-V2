@@ -21,7 +21,7 @@ function typeAflam(type){
     }
     return "Serie";
 }
-
+ let messageTimer;
 function showMessage(text, isError){
     const box = document.querySelector("#message");
     box.textContent = text;
@@ -31,6 +31,11 @@ function showMessage(text, isError){
     else{
         box.className = "mb-4 p-4 rounded bg-green-600 text-white";
     }
+    
+    clearTimeout(messageTimer)
+        messageTimer = setTimeout(function(){
+            hideMessage();
+        }, 3000);
 }
 
 function hideMessage(){
