@@ -114,3 +114,67 @@ async function loadItems() {
     loader.classList.add("hidden");
 }
 loadItems();
+
+let editeId = null;
+
+const form = document.querySelector("#content-form");
+const typeSelect = document.querySelector("#type");
+
+function show(){
+    document.querySelector("#duration-box").classList.toggle("hidden", typeSelect.value !== "movie");
+    document.querySelector("#seasons-box").classList.toggle("hidden", typeSelect.value !== "series");
+}
+typeSelect.addEventListener("change", show());
+
+function getFormData(){
+    return{
+        title: document.querySelector("#title").value.trim(),
+        type: typeSelect.value,
+        releaseYear: Number(document.querySelector("#year").value),
+        duration: Number(document.querySelector("#duraton").value),
+        seasons: Number(document.querySelector("#seasons").value),
+        image: document.querySelector("#image").value.trim(),
+        genres: document.querySelector("#genres").value.split(",").map(g => g.trim()),
+        directors: document.querySelector("#directors").value.split(",").map(g => g.trim()),
+        genres: document.querySelector("#countries").value.split(",").map(g => g.trim()),
+        description: document.querySelector("#description").value.trim()
+    };
+}
+
+function isValid(data){
+    let ok = true;
+
+    showError("title", "");
+    showError("type", "");
+    showError("year", "");
+    showError("image", "");
+    showError("duration", "");
+    showError("seasons", "");
+
+    if(data.title === ""){
+        showError("title", "Titre obligatoire");
+        ok = false;
+    }
+    if(data.type === ""){
+        showError("type", "Choisir un type");
+        ok = false;
+    }
+    if(data.releaseYear < 1900 || data.releaseYear > new Date().getFullYear()){
+        showError("year", "Annee invalide");
+        ok = false;
+    }
+    if(data.type === "movie" && data.duration <= 0){
+        showError("duration", "Duree invalide");
+        ok = false;
+    }
+    return ok;
+}
+
+function showError(name, text){
+    document.querySelector("#error-" + name).textContent = text;
+}
+
+async function createContent(data) {
+    const response
+    
+}
