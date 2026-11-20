@@ -1,0 +1,1 @@
+import {getCommnets, addCommnet} from "./API.js"
