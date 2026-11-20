@@ -16,25 +16,61 @@ export async function getTitles() {
     return data;
 }
 
+// export async function getComments() {
+//     const response = await fetch(commnetsURL)
+//     if(response.status === 404){
+//         return [];
+//     }
+//     if(!response.ok){
+//         throw new Error("Error API" + response.status);
+//     }
+//     return response.json();
+// }
+
+// export async function addComment(data) {
+//     const response = await fetch(commnetsURL, {
+//         method: "POST",
+//         headers: {"Content-Type": "application/json"},
+//         body: JSON.stringify(data)
+//     });
+//     if(!response.ok){
+//         throw new Error("Error API" + response.status);
+//     }
+//     return response.json();
+// }
+
 export async function getComments() {
-    const response = await fetch(commnetsURL)
-    if(response.status === 404){
-        return [];
-    }
-    if(!response.ok){
-        throw new Error("Error API" + response.status);
-    }
-    return response.json();
+    const items = await getTitles();
+    const all = [];
+    items.forEach(function(item){
+        (item.comments || []).forEach(function(c){
+            all.push({...c, contentId: item.id});
+        });
+    });
+    return all;
 }
 
-export async function addCommnet(data) {
-    const response = await fetch(commnetsURL, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
-    });
+export async function addComment(data) {
+    const response = await fetch(url + "/" + data.contentId);
     if(!response.ok){
         throw new Error("Error API" + response.status);
     }
-    return response.json();
+    const item = await response.json();
+
+    const newComment = {
+        author: data.author,
+        text: data.text,
+        createdAt: data.createdAt
+    };
+    const comments = [...(item.comments || []), newComment];
+
+    const saved = await fetch(url + "/" + data.contentId, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({...item, comments: comments})
+    });
+    if(!saved.ok){
+        throw new Error("Error API" + saved.status);
+    }
+    return data;
 }

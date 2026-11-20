@@ -3,6 +3,7 @@
 import {getTitles} from "./API.js";
 import {modal, closeModal, renderCards, renderPagination, renderFavorites, showError} from "./Ui.js";
 import { getFavorites, toggleFavorite, removeFavorite } from "./favorite.js";
+import {loadComment, setupCommentsForm} from "./comments.js";
 
 //Point d'entrée. Récupère les données de l'API, lance le premier affichage, et gère les erreurs.
 async function initialis(){
@@ -57,6 +58,8 @@ function showcards(items){
                 return i.id === id;
             })
             modal(item);
+            loadComment(item);
+            setupCommentsForm(item);
         })
         const heart = card.querySelector(".coeur");
         heart.addEventListener("click", function (event) {

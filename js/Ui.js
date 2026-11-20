@@ -104,6 +104,20 @@ text.innerHTML =  `<div class="grid md:grid-cols-2">
 
         </div>
     </div>
+
+    <div class="p-8 border-t border-zinc-800">
+        <h3 class="text-xl font-bold">Commentaires</h3>
+        <p id="comments-loader" class="mt-3 text-zinc-400">Chargement…</p>
+        <div id="comments-list" class="mt-3 flex flex-col gap-3"></div>
+
+        <form id="comment-form" novalidate class="mt-6 flex flex-col gap-2">
+            <input id="comment-author" type="text" placeholder="Votre nom" class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+            <p id="error-author" class="text-red-400 text-sm"></p>
+            <textarea id="comment-text" rows="3" placeholder="Votre commentaire" class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+            <p id="error-text" class="text-red-400 text-sm"></p>
+            <button type="submit" class="self-start px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold">Publier</button>
+        </form>
+    </div>
   `;
   document.querySelector("#close-btn").addEventListener("click", closeModal);
   document.querySelector("#modal").classList.remove("hidden");
