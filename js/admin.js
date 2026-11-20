@@ -45,7 +45,7 @@ function hideMessage(){
 function renderTable(list){
     const body = document.querySelector("#tabl-film");
     if(list.length === 0){
-        body.innerHTML = `<tr><td> colspan="5" class="p-6 text-center text-slate-400">Aucun titre.</td></tr>`
+        body.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Aucun titre.</td></tr>`
         return;
     }
 
@@ -124,19 +124,19 @@ function show(){
     document.querySelector("#duration-box").classList.toggle("hidden", typeSelect.value !== "movie");
     document.querySelector("#seasons-box").classList.toggle("hidden", typeSelect.value !== "series");
 }
-typeSelect.addEventListener("change", show());
+typeSelect.addEventListener("change", show);
 
 function getFormData(){
     return{
         title: document.querySelector("#title").value.trim(),
         type: typeSelect.value,
         releaseYear: Number(document.querySelector("#year").value),
-        duration: Number(document.querySelector("#duraton").value),
+        duration: Number(document.querySelector("#duration").value),
         seasons: Number(document.querySelector("#seasons").value),
         image: document.querySelector("#image").value.trim(),
         genres: document.querySelector("#genres").value.split(",").map(g => g.trim()),
         directors: document.querySelector("#directors").value.split(",").map(g => g.trim()),
-        genres: document.querySelector("#countries").value.split(",").map(g => g.trim()),
+        countries: document.querySelector("#countries").value.split(",").map(g => g.trim()),
         description: document.querySelector("#description").value.trim()
     };
 }
@@ -167,6 +167,14 @@ function isValid(data){
         showError("duration", "Duree invalide");
         ok = false;
     }
+    if(!data.image.startsWith("http")){
+        showError("image", "URL invalide");
+        ok = false;
+    }
+    if(data.type === "series" && data.seasons <= 0){
+        showError("seasons", "Nomber de siasons invalide");
+        ok = false;
+    }
     return ok;
 }
 
@@ -175,6 +183,95 @@ function showError(name, text){
 }
 
 async function createContent(data) {
-    const response
-    
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    });
+    if(!response.ok){
+        throw new Error("Error API" + response.status);
+    }
+    return response.json();
 }
+
+async function updateContent(id, data) {
+    const response = await fetch(url + "/" + id, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    if(!response.ok){
+        throw new Error("Error API" + response.status);
+    }
+    return response.json();
+}
+
+document.querySelector("#tabl-film").addEventListener("click", function(e){
+    if(!e.target.classList.contains("edit-btn")){
+        return;
+    }
+    const item = items.find(function(i){
+        return i.id === e.target.dataset.id;
+    });
+    editeId = item.id;
+
+    document.querySelector("#title").value = item.title;
+    typeSelect.value = item.type;
+    document.querySelector("#year").value = item.releaseYear;
+    document.querySelector("#duration").value = item.duration || "";
+    document.querySelector("#seasons").value = item.seasons || "";
+    document.querySelector("#image").value = item.image;
+    document.querySelector("#genres").value = (item.genres || []).join(", ");
+    document.querySelector("#directors").value = (item.directors || []).join(", ")
+    document.querySelector("#countries").value = (item.countries || []).join(", ")
+    document.querySelector("#description").value = item.description || "";
+
+    show();
+    document.querySelector("#form-title").textContent = "Modifier un titre";
+    document.querySelector("#submit-btn").textContent = "Enregistrer";
+    document.querySelector("#cancel-btn").classList.remove("hidden");
+});
+
+function resetForm(){
+    form.reset();
+    editeId = null;
+    show();
+    document.querySelector("#form-title").textContent = "Ajouter un titre";
+    document.querySelector("#submit-btn").textContent = "Ajouter";
+    document.querySelector("#cancel-btn").classList.add("hidden");
+}
+
+document.querySelector("#cancel-btn").addEventListener("click", resetForm);
+
+form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    
+    const data = getFormData();
+    if(!isValid(data)){
+        return;
+    }
+    try{
+        if(editeId === null){
+            const created = await createContent(data);
+            items.push(created);
+            showMessage("Titre ajoute", false);
+        }
+        else{
+            const item = items.find(function(i){
+                return i.id === editeId;
+            })
+            const updated = {...item, ...data};
+            const saved = await updateContent(editeId, updated);
+            items = items.map(function(i){
+                return i.id === editeId ? saved : i;
+            })
+            showMessage("Titre modifie", false);
+        }
+        renderTable(items);
+        resetForm();
+    }
+    catch(error){
+        showMessage("Impossible d'enregistrer. Ressayer", true);
+        console.log(error.message);
+    }
+})
