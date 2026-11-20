@@ -14,3 +14,7 @@ export async function getTitles() {
     const data = await response.json();
     return data;
 }
+
+export async function getComments() {
+    const response = await fetch(CommentU)
+}
